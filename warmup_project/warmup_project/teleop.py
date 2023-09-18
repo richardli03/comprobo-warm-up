@@ -6,16 +6,23 @@ import tty
 import select
 import sys
 import termios
+from time import sleep
+
 
 class Teleop(Node):
     def __init__(self):
-        super().__init__('publisher')
-        self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+        super().__init__("teleop")
+        self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
         timer_period = 1
         # self.run_loop()
         self.timer = self.create_timer(timer_period, self.run_loop)
-    
-    def get_key(self):
+
+    def get_key(self) -> str:
+        """Accept keyboard input
+
+        :return: the key that was inputed
+        :rtype: str
+        """
         tty.setraw(sys.stdin.fileno())
         select.select([sys.stdin], [], [], 0)
         key = sys.stdin.read(1)
@@ -23,13 +30,21 @@ class Teleop(Node):
         return key
 
     def run_loop(self):
-        
-        msg = Twist()
-        key = self.get_key() # THIS WILL BLOCK
+        """Run the main loop of the Teleop Node.
 
-        if key == '\x03':
+        Accept keyboard input from the user, and publish the
+        corresponding message to the robot.
+
+        :raises KeyboardInterrupt: if the user issues a keybaord interrupt, this
+            function catches and re-raises it.
+        """
+        msg = Twist()
+        key = self.get_key()  # THIS WILL BLOCK
+
+        if key == "\x03":
             msg.linear.x = 0.0
             msg.angular.z = 0.0
+            self.publisher.publish(msg)
             raise KeyboardInterrupt("INTERRUPTED")
 
         if key == "a":
@@ -49,13 +64,18 @@ class Teleop(Node):
             msg.linear.x = 0.0
 
         self.publisher.publish(msg)
-    
-        
+
+
 def main(args=None):
-    rclpy.init(args=args) # init the node
+    rclpy.init(args=args)  # init the node
     node = Teleop()
-    rclpy.spin(node) # starts up the node
-    rclpy.shutdown() # if it finishes, it'll shutdown
-    
-if __name__ == '__main__':
+    try:
+        rclpy.spin(node)  # starts up the node
+    except KeyboardInterrupt:
+        print("Got signal to stop")
+        pass
+    rclpy.shutdown()  # if it finishes, it'll shutdown
+
+
+if __name__ == "__main__":
     main()
