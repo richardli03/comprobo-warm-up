@@ -64,9 +64,9 @@ rosbag2_bagfile_information:
   compression_format: ""
   compression_mode: ""
   relative_file_paths:
-    - drive_square_bag_0.db3
+    - person_follower_0.db3
   files:
-    - path: drive_square_bag_0.db3
+    - path: person_follower_0.db3
       starting_time:
         nanoseconds_since_epoch: 1695130083474956572
       duration:
