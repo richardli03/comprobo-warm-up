@@ -4,11 +4,11 @@ Richard Li
 ## Teleop
 The `Teleop` node is designed to accept keyboard inputs from the user and translate that to motion of the robot. My implementation of `Teleop` uses WASD as movement keys 
 
-    - `W` stops the robot from turning and moves the robot forwards
-    - `S` stops the robot from turning and moves the robot backwards 
-    - `A` stops the robot's forward/backward movement and turns the robot left (relative to the direction it is currently facing) 
-    - `D` stops the robot's forward/backward movement and turns the robot right (relative to the direction it is currently facing)
-    - `Q` stops all forward/backward movement and turning. 
+  - `W` stops the robot from turning and moves the robot forwards
+  - `S` stops the robot from turning and moves the robot backwards 
+  - `A` stops the robot's forward/backward movement and turns the robot left (relative to the direction it is currently facing) 
+  - `D` stops the robot's forward/backward movement and turns the robot right (relative to the direction it is currently facing)
+  - `Q` stops all forward/backward movement and turning. 
 
 ![State Diagram](assets/TELEOP.png)
 
