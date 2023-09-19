@@ -53,6 +53,7 @@ class WallFollower(Node):
         theta1_dist = msg.ranges[45]
         theta2_dist = msg.ranges[135]  # 90 degrees past the previous
         # print(straight_aead_dist)
+        forward_mag = 0.1
         print(f"THETA1 was {theta1_dist}, theta2_dist was {theta2_dist}")
         if straight_ahead_dist < 0.5:
             turn_mag = -5  # if we're stuck against a wall, turn until we're not
@@ -60,7 +61,7 @@ class WallFollower(Node):
             turn_mag = theta1_dist - theta2_dist
 
         print(turn_mag)
-        self.move(0.1, turn_mag)
+        self.move(forward_mag, turn_mag)
 
 
 def main(args=None):

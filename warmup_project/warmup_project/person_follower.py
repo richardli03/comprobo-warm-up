@@ -9,17 +9,8 @@ from math import pi
 from numpy import mean
 from enum import Enum, auto
 
-CORRECTIVE_CONSTANT = 0.35
 
-
-class States(Enum):
-    AGGRESSIVE_LEFT = auto()
-    LEFT = auto()
-    RIGHT = auto()
-    STRAIGHT = auto()
-
-
-class WallFollower(Node):
+class PersonFollower(Node):
     def __init__(self):
         super().__init__("person_follower")
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
@@ -88,7 +79,7 @@ class WallFollower(Node):
 
 def main(args=None):
     rclpy.init(args=args)  # init the node
-    node = WallFollower()
+    node = PersonFollower()
     rclpy.spin(node)  # starts up the node
     rclpy.shutdown()  # if it finishes, it'll shutdown
 

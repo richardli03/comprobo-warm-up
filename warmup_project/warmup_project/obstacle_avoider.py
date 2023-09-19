@@ -11,14 +11,8 @@ from enum import Enum, auto
 import numpy as np
 
 
-class States(Enum):
-    AGGRESSIVE_LEFT = auto()
-    LEFT = auto()
-    RIGHT = auto()
-    STRAIGHT = auto()
 
-
-class WallFollower(Node):
+class ObstacleAvoider(Node):
     def __init__(self):
         super().__init__("obstacle_avoidance")
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
@@ -97,7 +91,7 @@ class WallFollower(Node):
 
 def main(args=None):
     rclpy.init(args=args)  # init the node
-    node = WallFollower()
+    node = ObstacleAvoider()
     rclpy.spin(node)  # starts up the node
     rclpy.shutdown()  # if it finishes, it'll shutdown
 
