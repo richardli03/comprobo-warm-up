@@ -27,9 +27,6 @@ class WallFollower(Node):
 
     def update_position(self, msg):
         """
-        NOTE: while this isn't really used in this naive implementation of
-        drive-square, I still found the data useful.
-
         Find the current position and orientation of the robot and print it.
         Doesn't technically return anything, because I didn't use the output
         of this function.
@@ -46,16 +43,16 @@ class WallFollower(Node):
         Given a distance and angle, compute what the
         x,y coordinates for a marker ought to be
 
-        :param dist: a distance
+        :param dist: a distance measured from the LIDAR scan
         :type dist: int
-        :param angle: an angle from the global frame's 0 degrees
+        :param angle: an angle, as compared to straight ahead in the robot coord frame
         :type angle: int
         :return: the x and y coordinate
         :rtype: tuple
         """
         return (
-            (self.xpos + cos(radians(angle)) * dist),
-            (self.ypos + sin(radians(angle)) * dist),
+            (cos(radians(angle)) * dist),
+            (sin(radians(angle)) * dist),
         )
 
     def pub_marker(self, dist, angle):
@@ -63,7 +60,7 @@ class WallFollower(Node):
         a wall. TODO: factor in robot orientation, not global!
         """
         msg = Marker()
-        msg.header.frame_id = "odom"
+        msg.header.frame_id = "base_link"
         msg.type = Marker.SPHERE
         msg.action = Marker.ADD
 
