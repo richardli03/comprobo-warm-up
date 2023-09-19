@@ -5,10 +5,9 @@ from time import sleep
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
-from math import pi
+from math import pi, radians, sin, cos
 from enum import Enum, auto
-
-CORRECTIVE_CONSTANT = 0.35
+from visualization_msgs.msg import Marker
 
 
 class States(Enum):
@@ -22,7 +21,57 @@ class WallFollower(Node):
     def __init__(self):
         super().__init__("wall_follow")
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
+        self.odom = self.create_subscription(Odometry, "odom", self.update_position, 10)
+        self.marker = self.create_publisher(Marker, "vis_mark", 10)
         self.scan_msg = self.create_subscription(LaserScan, "scan", self.run_loop, 10)
+
+    def update_position(self, msg):
+        """
+        NOTE: while this isn't really used in this naive implementation of
+        drive-square, I still found the data useful.
+
+        Find the current position and orientation of the robot and print it.
+        Doesn't technically return anything, because I didn't use the output
+        of this function.
+
+        :param msg: a msg from the odometry output of the robot
+        :type msg: Odometry
+        """
+        self.xpos = msg.pose.pose.position.x
+        self.ypos = msg.pose.pose.position.y
+        self.zpos = msg.pose.pose.position.z
+
+    def compute_marker_location(self, dist, angle):
+        return (
+            (self.xpos + cos(radians(angle)) * dist),
+            (self.ypos + sin(radians(angle)) * dist),
+        )
+
+    def pub_marker(self, dist, angle):
+        """Publish the marker at 45 and 135 degrees that the robot uses to follow
+        a wall.
+        """
+        msg = Marker()
+        msg.header.frame_id = "odom"
+        msg.type = Marker.SPHERE
+        msg.action = Marker.ADD
+
+        msg.pose.position.x, msg.pose.position.y = self.compute_marker_location(
+            dist, angle
+        )
+        msg.pose.position.z = 0.0
+
+        print(msg.pose.position.x, msg.pose.position.y)
+
+        msg.scale.x = 0.2
+        msg.scale.y = 0.2
+        msg.scale.z = 0.2
+
+        msg.color.a = 1.0
+        msg.color.r = 0.0
+        msg.color.g = 0.0
+        msg.color.b = 1.0
+        self.marker.publish(msg)
 
     def move(self, lin, ang):
         """Move the robot with some linear velocity and some angular velocity.
@@ -54,14 +103,16 @@ class WallFollower(Node):
         theta2_dist = msg.ranges[135]  # 90 degrees past the previous
         # print(straight_aead_dist)
         forward_mag = 0.1
-        print(f"THETA1 was {theta1_dist}, theta2_dist was {theta2_dist}")
+        # print(f"THETA1 was {theta1_dist}, theta2_dist was {theta2_dist}")
         if straight_ahead_dist < 0.5:
             turn_mag = -5  # if we're stuck against a wall, turn until we're not
         else:
             turn_mag = theta1_dist - theta2_dist
 
-        print(turn_mag)
+        # print(turn_mag)
         self.move(forward_mag, turn_mag)
+        self.pub_marker(dist=theta1_dist, angle=45)
+        self.pub_marker(dist=theta1_dist, angle=135)
 
 
 def main(args=None):
