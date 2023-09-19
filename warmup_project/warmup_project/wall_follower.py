@@ -43,8 +43,8 @@ class WallFollower(Node):
 
     def run_loop(self, msg):
         """
-        From a scan message, determine what state the system
-        ought to exist in.
+        Proportionally turn the robot based off of how far off of parallel to the wall
+        it is.
 
         :param msg: _description_
         :type msg: _type_
