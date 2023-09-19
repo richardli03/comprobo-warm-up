@@ -21,7 +21,7 @@ class States(Enum):
 
 class WallFollower(Node):
     def __init__(self):
-        super().__init__("wall_follow")
+        super().__init__("person_follower")
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
         self.scan_msg = self.create_subscription(LaserScan, "scan", self.run_loop, 10)
 
@@ -66,8 +66,7 @@ class WallFollower(Node):
             ]
         )
 
-        # results[0] = msg.ranges[180]
-
+        # NOTE: results[0] = msg.ranges[180]
         avg_direction = mean(results)
         forward_mag = 0.5
         print(msg.ranges[0])
@@ -78,7 +77,8 @@ class WallFollower(Node):
 
         turn_angle = avg_direction - 180
 
-        turn_mag = 0.01 * turn_angle
+        # magic number turning multiplier, just so the robot doesn't fishtail
+        turn_mag = 0.05 * turn_angle
         # if avg_directione > 0:
 
         self.move(forward_mag, turn_mag)
