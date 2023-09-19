@@ -42,6 +42,17 @@ class WallFollower(Node):
         self.zpos = msg.pose.pose.position.z
 
     def compute_marker_location(self, dist, angle):
+        """
+        Given a distance and angle, compute what the
+        x,y coordinates for a marker ought to be
+
+        :param dist: a distance
+        :type dist: int
+        :param angle: an angle from the global frame's 0 degrees
+        :type angle: int
+        :return: the x and y coordinate
+        :rtype: tuple
+        """
         return (
             (self.xpos + cos(radians(angle)) * dist),
             (self.ypos + sin(radians(angle)) * dist),
@@ -49,7 +60,7 @@ class WallFollower(Node):
 
     def pub_marker(self, dist, angle):
         """Publish the marker at 45 and 135 degrees that the robot uses to follow
-        a wall.
+        a wall. TODO: factor in robot orientation, not global!
         """
         msg = Marker()
         msg.header.frame_id = "odom"
