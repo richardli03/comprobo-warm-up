@@ -16,7 +16,7 @@ class States(Enum):
     FOLLOWING = auto()
 
 
-class WallFollower(Node):
+class FiniteStateMachine(Node):
     def __init__(self):
         super().__init__("finite_state_controller")
         self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
@@ -111,7 +111,7 @@ class WallFollower(Node):
 
 def main(args=None):
     rclpy.init(args=args)  # init the node
-    node = WallFollower()
+    node = FiniteStateMachine()
     rclpy.spin(node)  # starts up the node
     rclpy.shutdown()  # if it finishes, it'll shutdown
 
