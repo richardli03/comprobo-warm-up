@@ -10,6 +10,9 @@ from numpy import mean
 from enum import Enum, auto
 import numpy as np
 
+# How many degrees in front of the robot to consider an object as "blocking"
+VISION_CONE = 180
+
 
 class States(Enum):
     AVOIDING = auto()
@@ -85,7 +88,9 @@ class FiniteStateMachine(Node):
             if avg_direction < 30 or avg_direction > 330:
                 self.state = States.FOLLOWING
                 turn_angle = avg_direction - 180
-            elif avg_direction < 90 or avg_direction > 270:
+            elif avg_direction < (midpoint - VISION_CONE // 2) or avg_direction > (
+                midpoint + VISION_CONE // 2
+            ):
                 turn_angle = 0
             else:
                 turn_angle = avg_direction - 90

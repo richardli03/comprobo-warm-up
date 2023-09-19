@@ -9,6 +9,12 @@ from math import pi
 from numpy import mean
 from enum import Enum, auto
 
+FORWARD_SPEED = 0.5
+
+# force the robot to drive slower so behavior is more controlled
+DRIVE_MULTIPLIER = 0.5
+TURNING_MULTIPLER = 0.05
+
 
 class PersonFollower(Node):
     def __init__(self):
@@ -24,9 +30,9 @@ class PersonFollower(Node):
         that will move the robot accordingly.
 
         :param lin: the linear velocity to give the robot
-        :type lin: int
-        :param ang: _description_
-        :type ang: _type_
+        :type lin: int/float
+        :param ang: the angular velocity to give the robot
+        :type ang: int/float
         """
         msg = Twist()
         msg.linear.x = float(lin)
@@ -59,19 +65,18 @@ class PersonFollower(Node):
 
         # NOTE: results[0] = msg.ranges[180]
         avg_direction = mean(results)
-        forward_mag = 0.5
+        forward_mag = FORWARD_SPEED
         print(msg.ranges[0])
         if msg.ranges[0] < 1:
-            forward_mag = forward_mag * (msg.ranges[0]) * 0.5
+            forward_mag = forward_mag * (msg.ranges[0]) * DRIVE_MULTIPLIER
         else:
             pass
 
+        # "magic number", this turns the robot to face the object
         turn_angle = avg_direction - 180
 
-        # magic number turning multiplier, just so the robot doesn't fishtail
-        turn_mag = 0.05 * turn_angle
-        # if avg_directione > 0:
-
+        # turning multiplier, just so the robot doesn't fishtail
+        turn_mag = TURNING_MULTIPLER * turn_angle
         self.move(forward_mag, turn_mag)
 
         print(results)

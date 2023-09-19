@@ -11,6 +11,11 @@ from enum import Enum, auto
 import numpy as np
 
 
+# How many degrees in front of the robot to consider an object as "blocking"
+VISION_CONE = 180
+TURNING_MULTIPLER = 0.05
+FORWARD_SPEED = 0.5
+
 
 class ObstacleAvoider(Node):
     def __init__(self):
@@ -28,9 +33,9 @@ class ObstacleAvoider(Node):
         that will move the robot accordingly.
 
         :param lin: the linear velocity to give the robot
-        :type lin: int
-        :param ang: _description_
-        :type ang: _type_
+        :type lin: int/float
+        :param ang: the angular velocity to give the robot
+        :type ang: int/float
         """
         msg = Twist()
         msg.linear.x = float(lin)
@@ -72,18 +77,20 @@ class ObstacleAvoider(Node):
                 if val < 1000
             ]
         )
-        forward_mag = 0.5
+
+        forward_mag = FORWARD_SPEED
         # NOTE: results[0] = msg.ranges[180]
         avg_direction = mean(results)
-        if avg_direction < 90 or avg_direction > 270:
+        if avg_direction < (midpoint - VISION_CONE // 2) or avg_direction > (
+            midpoint + VISION_CONE // 2
+        ):
             turn_angle = 0
         else:
+            # "magic number" but really just placing it orthogonal
             turn_angle = avg_direction - 90
 
-        # magic number turning multiplier, just so the robot doesn't fishtail
-        turn_mag = 0.05 * turn_angle
-        # if avg_directione > 0:
-
+        # proportional control so the robot doesn't fishtail
+        turn_mag = TURNING_MULTIPLER * turn_angle
         self.move(forward_mag, turn_mag)
 
         print(results)
