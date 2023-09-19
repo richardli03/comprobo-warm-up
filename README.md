@@ -1,15 +1,5 @@
 # comprobo-warm-up
-
-In your github repository, create a markdown file called README.md to serve as documentation for your project. Your writeup should answer the following questions. We expect this writeup to be done in such a way that you are proud to include it as part of your professional portfolio. As such, please make sure to write the report so that it is understandable to an external audience. Make sure to add pictures to your report, links to Youtube videos, embedded animated Gifs (these can be recorded with the tool peek).
-
-
-    - For each behavior, describe the problem at a high-level. Include any relevant diagrams that help explain your approach.  Discuss your strategy at a high-level and include any tricky decisions that had to be made to realize a successful implementation.
-    - For the finite state controller, what was the overall behavior. What were the states? What did the robot do in each state? How did you combine and how did you detect when to transition between behaviors?  Consider including a state transition diagram in your writeup.
-    -  How was your code structured? Make sure to include a sufficient detail about the object-oriented structure you used for your project.
-    -  What if any challenges did you face along the way?
-    -  What would you do to improve your project if you had more time?
-    -  What are the key takeaways from this assignment for future robotic programming projects? For each takeaway, provide a sentence or two of elaboration.
-
+Richard Li
 # Solution Descriptions
 ## Teleop
 The `Teleop` node is designed to accept keyboard inputs from the user and translate that to motion of the robot. My implementation of `Teleop` uses WASD as movement keys 
@@ -81,7 +71,9 @@ The `ObstacleAvoider` node is supposed to avoid objects that it sees in front of
 
 ![Object avoider avoiding an object](assets/avoider.gif)
 
-The implementation for the object avoider is essentially the opposite of the person follower, except that the goals are reversed. To do this, I changed the "goal" for our robot to placing the object at a 90 degree angle from its right side. Afterwards it'd be free to move as long as nothing entered the 180 degree range in front of it (essentially saying that anything past this range is "behind" the robot and therefore won't prevent its forward progress.)
+The implementation for the object avoider is essentially the opposite of the person follower, except that the goal is different. To do this, I changed the "goal" for our robot to placing the object at a 90 degree angle from its right side. 
+
+However, this implementation alone makes the robot drive in a circle around the object it's trying to avoid. To fix this, I made it free to move as long as nothing entered the 180 degree range in front of it (essentially saying that anything past this range is "behind" the robot and therefore won't prevent its forward progress.) This meant that after the robot turned away, it would eventually stop "seeing" the object and be allowed to drive forward.
 
 ## Finite State Controller
 
@@ -123,4 +115,4 @@ ROS, but particularly solving robotics problems computationally, is *hard*. In p
 
 Spend some time with just a pen and a paper. Draw out the geometry, draw out a potential solution, and iterate on it before ever writing a line of code. There are so many debugging tools that ROS provides, but the best one ever is comparing your paper notes to the code that you've written. I did this on the rewrite of `WallFollower`, `PersonFollower`, `ObstacleAvoider`, and `FiniteStateMachine`, and it saved me countless hours of changing constants back and forth.
 
-Sometimes the most effective solution is also the simplest. Don't overcomplicate a system when a simpler set of rules and behaviors will solve the problem.
+Sometimes the most effective solution is also the simplest. Don't overcomplicate a solution when a simpler set of rules and behaviors will solve the problem. I spent a lot of time working on wall-follower because I had an initial direction and just ran with it all the way through. At some point I really should have stop and reflected on the amount of time I was spending debugging state changes.
