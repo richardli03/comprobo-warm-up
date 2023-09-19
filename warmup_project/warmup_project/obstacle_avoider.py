@@ -10,13 +10,6 @@ from numpy import mean
 from enum import Enum, auto
 import numpy as np
 
-DRIVE_SPEED = 0.1
-TURN_SPEED = 0.6
-FORWARD_ALPHA = 1000.0
-POINT_ALPHA = 1
-
-CORRECTIVE_CONSTANT = 0.35
-
 
 class States(Enum):
     AGGRESSIVE_LEFT = auto()
@@ -52,7 +45,7 @@ class WallFollower(Node):
 
     def get_orientation(self, msg):
         """
-        Find the current position and orientation of the robot and print it.
+        Find the current orientation of the robot and print it.
         Doesn't technically return anything, because I didn't use the output
         of this function.
 
@@ -67,12 +60,12 @@ class WallFollower(Node):
         At every point in time, compute the mean index(!) of
         all the points visible to the neato that aren't above 1000.
 
-        Proportionally turn until the avg direction = 180 (which, in
-        my reindexed list, is straight ahead). Additionally, drive
-        forward proportionally to how close the object is.
+        Proportionally turn until the detected obstacle is
+        past 90 degrees on each side, meaning the obstacle is behind
+        the robot.
 
-        :param msg: _description_
-        :type msg: _type_
+        :param msg: message from the scanner
+        :type msg: LaserScan
         """
         # print(msg.ranges)
         midpoint = len(msg.ranges) // 2
