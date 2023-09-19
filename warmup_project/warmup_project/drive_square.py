@@ -78,6 +78,8 @@ class DriveSquareNode(Node):
             sleep(0.5)
             self.turn_left(90)
             sleep(1)
+        self.move(0.0, 0.0)
+        self.destroy_timer(self.timer)
 
 
 def main(args=None):
